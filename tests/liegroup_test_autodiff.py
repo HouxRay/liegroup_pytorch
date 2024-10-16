@@ -1,26 +1,12 @@
 """Compare forward- and reverse-mode Jacobians with a numerical Jacobian."""
-import functorch
-
 import liegroup
-
-from functools import lru_cache
 from typing import Callable, Tuple, Type
-
 import torch
 from torch.autograd.functional import jacobian
 from tests.liegroup_test_utils import assert_arrays_close, general_group_test, jacnumerical
 
 
 device = "cuda" if torch.cuda.is_available() else 'cpu'
-
-cached_jacfwd = lru_cache(maxsize=None)(
-    lambda f: torch.jit.trace(functorch.jacfwd(f),torch.tensor([0.1]))
-)
-cached_jacrev = lru_cache(maxsize=None)(
-    lambda f: torch.jit.trace(functorch.jacrev(f),torch.tensor([0.1]))
-)
-cached_jit = lru_cache(maxsize=None)(torch.jit.trace)
-
 
 def _assert_jacobians_close(
     Group: Type[liegroup.MatrixLieGroup],
