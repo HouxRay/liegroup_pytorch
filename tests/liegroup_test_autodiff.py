@@ -28,15 +28,8 @@ def _assert_jacobians_close(
     primal: liegroup.hints.Array,
 ) -> None:
     jacobian_fwd = jacobian(lambda g: f(Group,g), primal)
-    # jacobian_fwd = functorch.jacfwd(lambda g: f(Group,g))(primal)
-    # print(jacobian_fwd)
-    # jacobian_rev = cached_jacrev(f)(Group, primal)
-    # jacobian_numerical = jacnumerical(
-    #     lambda primal: cached_jit(f)(Group, primal)
-    # )(primal)
     jacobian_numerical = jacnumerical(lambda primal: f(Group,primal))(primal)
 
-    # assert_arrays_close(jacobian_fwd, jacobian_rev)
     assert_arrays_close(jacobian_fwd, jacobian_numerical, rtol=5e-4, atol=5e-4)
 
 
@@ -211,5 +204,4 @@ if __name__ == "__main__":
     print("SE2 test_log_random passed")
     test_log_identity(liegroup.SE3,batch_axes=())
     print("SE3 test_log_identity passed")
-    # test_so3_nan()
 
